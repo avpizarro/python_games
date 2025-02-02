@@ -3,11 +3,15 @@
 This repository contains exercises and small games created using **Pygame** as part of a learning process. The two main projects included are **Telebolito** (a Pong-style game) and **Flight 714** (a simple flight movement simulation).
 
 ## 🚀 Projects Included
-### **1️⃣ Telebolito**
+
+
+### **1️⃣ Telebolito** 
 A classic **Pong-style** game where you control a paddle, and the computer controls the other. The goal is to bounce the ball and score points against the AI opponent.
+![telebolito](./telebolito.png)
 
 ### **2️⃣ Flight 714**
 A simple game where you control an airplane, moving it around the screen while keeping it within boundaries.
+![flight 714](./flight714.png)
 
 ## 📌 Installation
 Make sure you have **Python 3.x** installed. Then, follow these steps:
