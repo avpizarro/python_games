@@ -20,7 +20,8 @@ speed = 2
 pipe_width = 150
 pipe_x = WIDTH/2
 gap = 200
-COLOUR = (255, 145, 77, 200)
+# COLOUR = (255, 145, 77, 200)
+COLOUR = (237, 217, 88, 200)
 
 # Score
 score = 0
@@ -83,7 +84,7 @@ class Bird(Props):
 
 
 # Pipe class
-class Pipes():
+class Pipe():
   def __init__(self, speed, width, gap, pipe_x=pipe_x):
     self.speed = speed
     self.width = width
@@ -98,7 +99,7 @@ class Pipes():
     self.bottom.move_ip(-self.speed, 0)
   
   #Method to draw the pipes onto the screen
-  def draw_pipes(self, screen):
+  def draw_pipe(self, screen):
     # Make a transparent rectangle
     # Start by creating a surface the size of the rectangle
     s = Surface(self.top.size, SRCALPHA)
@@ -125,10 +126,7 @@ class Pipes():
 bird = Bird(speed, "colibri_pixelate.png", bird_x, bird_y)
 
 # Create the pipes
-pipe1 = Pipes(2, pipe_width, gap)
-pipe2 = Pipes(2, pipe_width, gap, pipe_x+pipe_width*2)
-pipe3 = Pipes(2, pipe_width, gap, pipe_x+(pipe_width*2)*2)
-pipe4 = Pipes(2, pipe_width, gap, pipe_x+(pipe_width*2)*3)
+pipes = [Pipe(2, pipe_width, gap, pipe_x+(pipe_width*2)*i) for i in range(4)]
 
 # Function to move the bird
 def move_bird(bird_rect, speed):
@@ -139,7 +137,7 @@ while running:
   
   dt = clock.tick(60) / 1000  # Get time passed in seconds
   
-  # Add background and bird t screen
+  # Add background to display
   screen.blit(background, (0,0));
 
   # Quit event to use the X to end the game
@@ -148,82 +146,39 @@ while running:
       quit()
       running = False
   
-  
-  # Move the bird
+  # Add the bird to the screen, control and rotate it
   bird.control()
   bird.update(screen)
   bird.rotate(screen, -15)
-  # screen.blit(bird.img, bird.rect)
   
-  
-  if bird.rect.right > pipe1.top.right and not pipe1.passed:
-    print("Case 1")
-    pipe1.passed = True
-    score += 1
-  if bird.rect.right > pipe2.top.right and not pipe2.passed:
-    print("Case 2")
-    pipe2.passed = True
-    score += 1
-  if bird.rect.right > pipe3.top.right and not pipe3.passed:
-    print("Case 3")
-    pipe3.passed = True
-    score += 1
-  if bird.rect.right > pipe4.top.right and not pipe4.passed:
-    print("Case 4")
-    pipe4.passed = True
-    score += 1
-    
   # Draw pipes
-  pipe1.draw_pipes(screen)
-  pipe1.update()
-  pipe1.reset()
-  pipe2.draw_pipes(screen)
-  pipe2.update()
-  pipe2.reset()
-  pipe3.draw_pipes(screen)
-  pipe3.update()
-  pipe3.reset()
-  pipe4.draw_pipes(screen)
-  pipe4.update()
-  pipe4.reset()
+  for pipe in pipes:
+    pipe.draw_pipe(screen)
+    # Get the pipes moving
+    pipe.update()
+    # Add a new pipe once the pipe leaves the screen
+    pipe.reset()
+   
+    if bird.rect.right > pipe.top.right and not pipe.passed:
+      pipe.passed = True
+      score += 1
+    
+    if bird.mask.overlap(pipe.top_mask, (pipe.top.x - bird.rect.x, pipe.top.y - bird.rect.y)) or bird.mask.overlap(pipe.bottom_mask, (pipe.bottom.x - bird.rect.x, pipe.bottom.y - bird.rect.y)):
+      game_over = score_font.render("GAME OVER", True, (255,255,255))
+      screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
+      display.flip() # Update the screen
+      time.delay(5000) # Show Game over for 5 seconds
+      running = False
+      
+  score_text = score_font.render("Score: "+str(score), True, (0, 0, 0))
+  screen.blit(score_text, (WIDTH - 180, 50))
   
-  score_text = score_font.render(str(score), True, (0, 0, 0))
-  screen.blit(score_text, (WIDTH - 50, 50))
-                                 
   if bird.rect.y >= HEIGHT - bird.rect.h:
-    game_over = score_font.render("GAME OVER", True, (255, 255, 255))
-    screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
-    display.flip() # Update the screen
-    time.delay(5000) # Show Game over for 5 seconds
-    running = False
-  
-  if bird.mask.overlap(pipe1.top_mask, (pipe1.top.x - bird.rect.x, pipe1.top.y - bird.rect.y)) or bird.mask.overlap(pipe1.bottom_mask, (pipe1.bottom.x - bird.rect.x, pipe1.bottom.y - bird.rect.y)):
-    game_over = score_font.render("GAME OVER", True, (255, 255, 255))
+    game_over = score_font.render("GAME OVER", True, (255,255,255))
     screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
     display.flip() # Update the screen
     time.delay(5000) # Show Game over for 5 seconds
     running = False
     
-  if bird.mask.overlap(pipe2.top_mask, (pipe2.top.x - bird.rect.x, pipe2.top.y - bird.rect.y)) or bird.mask.overlap(pipe2.bottom_mask, (pipe2.bottom.x - bird.rect.x, pipe2.bottom.y - bird.rect.y)):
-    game_over = score_font.render("GAME OVER", True, (255, 255, 255))
-    screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
-    display.flip() # Update the screen
-    time.delay(5000) # Show Game over for 5 seconds
-    running = False
-    
-  if bird.mask.overlap(pipe3.top_mask, (pipe3.top.x - bird.rect.x, pipe3.top.y - bird.rect.y)) or bird.mask.overlap(pipe3.bottom_mask, (pipe3.bottom.x - bird.rect.x, pipe3.bottom.y - bird.rect.y)):
-    game_over = score_font.render("GAME OVER", True, (255, 255, 255))
-    screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
-    display.flip() # Update the screen
-    time.delay(5000) # Show Game over for 5 seconds
-    running = False
-    
-  if bird.mask.overlap(pipe4.top_mask, (pipe4.top.x - bird.rect.x, pipe4.top.y - bird.rect.y)) or bird.mask.overlap(pipe4.bottom_mask, (pipe4.bottom.x - bird.rect.x, pipe4.bottom.y - bird.rect.y)):
-    game_over = score_font.render("GAME OVER", True, (255, 255, 255))
-    screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
-    display.flip() # Update the screen
-    time.delay(5000) # Show Game over for 5 seconds
-    running = False
-  
   display.flip()
 quit()
