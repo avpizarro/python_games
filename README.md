@@ -1,6 +1,6 @@
 # Python Pygame Exercises
 
-This repository contains exercises and small games created using **Pygame** as part of a learning process. The two main projects included are **Telebolito** (a Pong-style game) and **Flight 714** (a simple flight movement simulation).
+This repository contains exercises and small games created using **Pygame** as part of a learning process. The projects included are **Telebolito** (a Pong-style game), **Flight 714** (a simple flight movement simulation) and **Colibrí** (a flappy bird-style game).
 
 ## 🚀 Projects Included
 
@@ -12,6 +12,10 @@ A classic **Pong-style** game where you control a paddle, and the computer contr
 ### **2️⃣ Flight 714**
 A simple game where you control an airplane, moving it around the screen while keeping it within boundaries.
 ![flight 714](./flight714.png)
+
+### **2️⃣ Colibrí**
+A flappy bird game where you keep the bird in the air with the space bar. Try not to hit the pipes and enjoy the Colombian mountains lanscape 😊
+![colibri](./colibri_landscape.png)
 
 ## 📌 Installation
 Make sure you have **Python 3.x** installed. Then, follow these steps:
@@ -42,6 +46,10 @@ python3 telebolito.py
 ```bash
 python3 game.py
 ```
+### **Run Colibrí**
+```bash
+python3 colibri.py
+```
 
 ## 🎮 Controls
 ### **Telebolito (Pong-Style Game)**
@@ -54,13 +62,18 @@ python3 game.py
 - **⬆️ UP Arrow**: Move up
 - **⬇️ DOWN Arrow**: Move down
 
+### **Colibrí (Flappy Bird-Style Game)**
+- **␣ SPACE**: Move bird up
+
 ## 📷 Image Attribution
 The following images are used in the game:
 - **Desert Background** (`desert.jpg`): Photo by Pixabay from Pexels - [The Great Sphinx](https://www.pexels.com/photo/the-great-sphinx-262786/)
 
 - **Airplane Image** (`airplane.png`): Icon by Jule & Matthias Steffen from the Noun Project - [Airplane](https://thenounproject.com/icon/airplane-5096/)
 
+- **Colombian Mountains** (`colibri_landscape.png`): Photo by Chris Rodriguez from Pexels - [Tall Tress on the Mountain Ranges](https://www.pexels.com/photo/tall-trees-on-the-mountain-ranges-2884864/)
 
+- **Colibrí** (`colibri_pixelate.png`): Pixel art based on the **Colombia Emplumada II** book cover photo by Juan Diego Castillo Ramírez - [Get the book](https://www.librerialerner.com.co/colombia-emplumada-ii-9789584874597-4090/p?srsltid=AfmBOorkkfUfNjfyKWA7GM6L7ai1O3FhO8YZ61lfYC5xIJBB5uDNkiI_)
 
 ## 🛠️ Features & Future Improvements
 ✅ Randomized ball movement direction in Telebolito  

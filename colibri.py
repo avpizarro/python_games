@@ -194,35 +194,35 @@ while running:
     game_over = score_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
     display.flip() # Update the screen
-    time.delay(2000) # Show Game over for 5 seconds
+    time.delay(5000) # Show Game over for 5 seconds
     running = False
   
   if bird.mask.overlap(pipe1.top_mask, (pipe1.top.x - bird.rect.x, pipe1.top.y - bird.rect.y)) or bird.mask.overlap(pipe1.bottom_mask, (pipe1.bottom.x - bird.rect.x, pipe1.bottom.y - bird.rect.y)):
     game_over = score_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
     display.flip() # Update the screen
-    time.delay(2000) # Show Game over for 5 seconds
+    time.delay(5000) # Show Game over for 5 seconds
     running = False
     
   if bird.mask.overlap(pipe2.top_mask, (pipe2.top.x - bird.rect.x, pipe2.top.y - bird.rect.y)) or bird.mask.overlap(pipe2.bottom_mask, (pipe2.bottom.x - bird.rect.x, pipe2.bottom.y - bird.rect.y)):
     game_over = score_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
     display.flip() # Update the screen
-    time.delay(2000) # Show Game over for 5 seconds
+    time.delay(5000) # Show Game over for 5 seconds
     running = False
     
   if bird.mask.overlap(pipe3.top_mask, (pipe3.top.x - bird.rect.x, pipe3.top.y - bird.rect.y)) or bird.mask.overlap(pipe3.bottom_mask, (pipe3.bottom.x - bird.rect.x, pipe3.bottom.y - bird.rect.y)):
     game_over = score_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
     display.flip() # Update the screen
-    time.delay(2000) # Show Game over for 5 seconds
+    time.delay(5000) # Show Game over for 5 seconds
     running = False
     
   if bird.mask.overlap(pipe4.top_mask, (pipe4.top.x - bird.rect.x, pipe4.top.y - bird.rect.y)) or bird.mask.overlap(pipe4.bottom_mask, (pipe4.bottom.x - bird.rect.x, pipe4.bottom.y - bird.rect.y)):
     game_over = score_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
     display.flip() # Update the screen
-    time.delay(2000) # Show Game over for 5 seconds
+    time.delay(5000) # Show Game over for 5 seconds
     running = False
   
   display.flip()
