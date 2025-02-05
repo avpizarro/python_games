@@ -1,5 +1,6 @@
 from pygame import *
 from random import randint, choice
+import numpy as np
 
 # Get the variables
 WIDTH = 800
@@ -47,13 +48,72 @@ class Border(sprite.Sprite):
 class Coin(sprite.Sprite):
   def __init__(self, img, x_pos, y_pos):
     sprite.Sprite.__init__(self)
-    self.image = transform.scale(image.load(img), (40,40))
+    self.original_image = transform.scale(image.load(img), (40,40)).convert_alpha()
+    self.image = self.original_image.copy()
     self.rect = self.image.get_rect()
     self.rect.x = x_pos
     self.rect.y = y_pos
       
   def draw_coin(self, position):
-    screen.blit(self.img, position)
+    screen.blit(self.image, position)
+    
+  def add_color(self, color=(0,255,0)):
+    self.image = self.original_image.copy()
+    arr = surfarray.pixels3d(self.image).astype(np.uint8) # Get a pixel array
+    alpha = surfarray.pixels_alpha(self.image).astype(np.uint8) # Alpha channel
+    mask = (arr[:, :, 0] > 10) | (arr[:, :, 1] > 10) | (arr[:, :, 2] > 10) # ignore near balck pixels
+    
+    # Apply color while keeping original brightness
+    arr[:, :, 0][mask] =(arr[:, :, 0][mask] // 2) + (color[0] // 2)
+    arr[:, :, 1][mask] =(arr[:, :, 1][mask] // 2) + (color[1] // 2)
+    arr[:, :, 2][mask] =(arr[:, :, 2][mask] // 2) + (color[2] // 2)
+    
+    # Restore the modified RGB back to the surface
+    surfarray.blit_array(self.image, arr)
+    
+   # Restore transparency
+    alpha_surface = Surface(self.image.get_size(), SRCALPHA)
+    alpha_surface.fill((255, 255, 255, 0))  # Fully transparent base
+    alpha_surface.blit(self.image, (0, 0))  # Copy the image with tint
+    self.image = alpha_surface  # Replace the original image
+
+    # Restore alpha channel separately
+    self.image.set_alpha(255)  # Ensure full visibility
+    self.image.set_colorkey((0, 0, 0))  # Make black transparent  
+    
+class Props(sprite.Sprite):
+  def __init__(self, speed, img, x, y):
+    sprite.Sprite.__init__(self)
+    self.speed = speed
+    self.image = transform.scale(image.load(img), (40,40))
+    self.rect = self.image.get_rect()
+    self.rect.x = x
+    self.rect.y = y
+  
+  def update(self):
+    screen.blit(self.image, (self.rect.x, self.rect.y))
+    
+class Ghosts(Props): 
+  def move(self): # I need to have many conditions to have the ghost moving vertically and horizontally
+    #and changing directions
+    if self.rect.x >= 0 and self.rect.x <= 800 - self.rect.w and self.rect.y >= 0 and self.rect.y <= 800 - self.rect.h:
+      self.rect.move_ip(self.speed, self.speed)
+    
+  def change_direction(self):
+    self.speed = -self.speed
+
+class Player(Props):
+  def controls(self):
+    keys = key.get_pressed()
+    if keys[K_UP] and self.rect.top > 0:
+      self.rect.y -= self.speed
+    if keys[K_DOWN] and self.rect.bottom < HEIGHT:
+      self.rect.y += self.speed
+    if keys[K_LEFT] and self.rect.left >= 0:
+      self.rect.x -= self.speed
+    if keys[K_RIGHT] and self.rect.right < WIDTH:
+      self.rect.x += self.speed
+    
     
 # Create the groups to 
 walls_horizontal = []
@@ -78,17 +138,31 @@ for i in range(1, 6):
   walls_horizontal.append(wall_bottom)
   walls_vertical.append(wall_top_left)
   walls_vertical.append(wall_top_right)
-  
+
 # create a coin instance
 coins = sprite.Group()
+
+# Create a group for the Wallet
+wallet = sprite.Group()
 
 # store the possible coin positions
 pos = [15, 95]
 i = 95
 while len(pos) < 13:
   i += 60
-print(pos)
+  pos.append(i)
   
+# Create the wallet prop
+wallet_icon = Props(0, "wallet.png", choice(pos), choice(pos))
+# Add the wallet to the coins group to display it
+coins.add(wallet_icon)
+
+# Create the ghost and assign a random position
+ghost = Ghosts(2, "ghost.png", choice(pos), choice(pos))
+
+# Create the player and assign the home position
+player = Player(2, "player.png", 15, 15)
+    
 for i in range(12):
   coin = Coin("coin.png", choice(pos), choice(pos))
   coins.add(coin)
@@ -101,8 +175,8 @@ while running:
   # Quit game when pressing X on the window
   for e in event.get():
     if e.type == QUIT:
-      running = False
       quit()
+      running = False
       
   # Add a colour to the display
   screen.fill(COLOUR_BK)
@@ -115,7 +189,12 @@ while running:
   
   # Draw coins
   coins.draw(screen)
+  ghost.update()
+  ghost.move()
+  player.update()
+  player.controls()
         
-  display.flip()
-
+  display.update()
+  clock.tick(60)
+  
 quit()

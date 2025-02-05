@@ -1,1 +1,1 @@
-o
+    # del arr # Unlock the surface
