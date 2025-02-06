@@ -1,10 +1,17 @@
 from pygame import *
 from random import randint, choice
-import numpy as np
+# import numpy as np # Imported numpy to manage image pixels and change colour - TBC
 
-# Get the variables
+# Initialise the font
+font.init()
+score_font = font.Font(None,45)
+
+# Set the variables
+# Screen
 WIDTH = 800
 HEIGHT = 800
+
+# Colours
 COLOUR_BK = ((238, 238, 238))
 COLOUR = ((0, 0, 0))
 
@@ -13,6 +20,9 @@ wall_thickness = 10
 gap = 60
 num_of_walls = int(((WIDTH-gap)/(gap+10)) + 1)
 
+# Coins
+coins_collected = 0
+
 #Set the display
 #Size
 screen = display.set_mode((WIDTH, HEIGHT))
@@ -20,31 +30,42 @@ screen = display.set_mode((WIDTH, HEIGHT))
 display.set_caption("Tragamonedas 💰")
 
 # Get the clock going
-clock = time.Clock()
+clock = time.Clock() # Remember to call it in the loop - otherwise the app crashes
 
-class Border(sprite.Sprite):
-  def __init__(self, gap, colour, x, y, length, full_width):
-    sprite.Sprite.__init__(self)
+# A class to create the wall segments as sprites
+class Wall(sprite.Sprite):
+  def __init__(self, x, y, width, height, colour):
+    super().__init__()
+    print(f"Creating surface with size: {width} x {height} in x: {x}, y: {y}")  # Debugging
+    self.image = Surface((width, height))
+    self.image.fill(colour)
+    self.rect = self.image.get_rect(topleft=(x, y))    
+
+# Class to calculate the different wall positions and to draw them 
+class Border():
+  def __init__(self, gap, colour, x, y, length, full_length, wall_thickness):
     self.gap = gap
     self.colour = colour
     self.x = x
     self.y = y
     self.length = length
     self.thickness = wall_thickness
-    self.full_width = full_width
+    self.full_length = full_length
+    self.walls = sprite.Group() # Store wall segments
   
-  def build_wall_horizontal(self):
-    sibling_x = self.x + self.length + gap  # Calculate the x position of the second side of the wall
-    sibling_length = self.full_width - gap - self.length  # Calculate the length of the second side of the wall
-    draw.rect(screen, self.colour, (self.x, self.y, self.length, self.thickness)) # Draw the first rectangle
-    draw.rect(screen, self.colour, (sibling_x, self.y, sibling_length, self.thickness)) # Draw the second rectangle
+  def build_horizontal_wall(self):
+    sibling_x = self.x + self.length + self.gap  # Calculate the x position of the second side of the wall
+    sibling_length = self.full_length - self.gap - self.length  # Calculate the length of the second side of the wall
+    self.walls.add(Wall(self.x, self.y, self.length, self.thickness, self.colour)) # Draw the left rectangle
+    self.walls.add(Wall(sibling_x, self.y, sibling_length, self.thickness, self.colour)) # Draw the right rectangle
+  
+  def build_vertical_wall(self):
+    sibling_y = self.y + self.length + self.gap # Calculate y position, x remains the same, but y needs to change
+    sibling_length = self.full_length - self.gap - self.length # Calculate the length of the second side of the wall
+    self.walls.add(Wall(self.x, self.y, self.thickness, self.length, self.colour)) # Draw the first rectangle
+    self.walls.add(Wall(self.x, sibling_y, self.thickness, sibling_length, self.colour)) # Draw the second rectangle
     
-  def build_wall_vertical(self):
-    sibling_y = self.y + self.length + gap # Calculate y position, x remains the same, but y needs to change
-    sibling_length = self.full_width - gap - self.length # Calculate the length of the second side of the wall
-    draw.rect(screen, self.colour, (self.x, self.y, self.thickness, self.length)) # Draw the first rectangle
-    draw.rect(screen, self.colour, (self.x, sibling_y, self.thickness, sibling_length)) # Draw the second rectangle
-
+# Coin Class
 class Coin(sprite.Sprite):
   def __init__(self, img, x_pos, y_pos):
     sprite.Sprite.__init__(self)
@@ -57,30 +78,7 @@ class Coin(sprite.Sprite):
   def draw_coin(self, position):
     screen.blit(self.image, position)
     
-  def add_color(self, color=(0,255,0)):
-    self.image = self.original_image.copy()
-    arr = surfarray.pixels3d(self.image).astype(np.uint8) # Get a pixel array
-    alpha = surfarray.pixels_alpha(self.image).astype(np.uint8) # Alpha channel
-    mask = (arr[:, :, 0] > 10) | (arr[:, :, 1] > 10) | (arr[:, :, 2] > 10) # ignore near balck pixels
-    
-    # Apply color while keeping original brightness
-    arr[:, :, 0][mask] =(arr[:, :, 0][mask] // 2) + (color[0] // 2)
-    arr[:, :, 1][mask] =(arr[:, :, 1][mask] // 2) + (color[1] // 2)
-    arr[:, :, 2][mask] =(arr[:, :, 2][mask] // 2) + (color[2] // 2)
-    
-    # Restore the modified RGB back to the surface
-    surfarray.blit_array(self.image, arr)
-    
-   # Restore transparency
-    alpha_surface = Surface(self.image.get_size(), SRCALPHA)
-    alpha_surface.fill((255, 255, 255, 0))  # Fully transparent base
-    alpha_surface.blit(self.image, (0, 0))  # Copy the image with tint
-    self.image = alpha_surface  # Replace the original image
-
-    # Restore alpha channel separately
-    self.image.set_alpha(255)  # Ensure full visibility
-    self.image.set_colorkey((0, 0, 0))  # Make black transparent  
-    
+# Super Class to make the Ghost and Player sprites
 class Props(sprite.Sprite):
   def __init__(self, speed, img, x, y):
     sprite.Sprite.__init__(self)
@@ -92,16 +90,30 @@ class Props(sprite.Sprite):
   
   def update(self):
     screen.blit(self.image, (self.rect.x, self.rect.y))
+  
+  def reset(self):
+    screen.blit(self.image, 15, 15)
     
 class Ghosts(Props): 
-  def move(self): # I need to have many conditions to have the ghost moving vertically and horizontally
-    #and changing directions
-    if self.rect.x >= 0 and self.rect.x <= 800 - self.rect.w and self.rect.y >= 0 and self.rect.y <= 800 - self.rect.h:
-      self.rect.move_ip(self.speed, self.speed)
+  def move(self): 
+    # the ghost moves vertically and horizontally
+
+    # Move right
+    # if self.rect.right < WIDTH:
+    #   self.rect.move_ip(self.speed, 0)
+    # Move left
+    if self.rect.left > 0:
+      self.rect.move_ip(-self.speed, 0)
+    # Move up
+    # self.rect.move_ip(0, -self.speed)
+    # Move down
+    # self.rect.move_ip(0, self.speed)
     
+      
   def change_direction(self):
     self.speed = -self.speed
 
+# Define the Player class with the method to control the movement
 class Player(Props):
   def controls(self):
     keys = key.get_pressed()
@@ -114,10 +126,8 @@ class Player(Props):
     if keys[K_RIGHT] and self.rect.right < WIDTH:
       self.rect.x += self.speed
     
-    
-# Create the groups to 
-walls_horizontal = []
-walls_vertical = []
+# Create the maze
+maze = sprite.Group()
 
 for i in range(1, 6):
   
@@ -125,25 +135,31 @@ for i in range(1, 6):
   full_length = int(WIDTH - gap*2*i) # (This is passed as a param to calculate the second side of the wall length)
   
   # Array with random ints to get the length of the first side of the wall
-  first_wall_lengths = [randint(0, full_length) for i in range(4)]
+  first_wall_lengths = [randint(0, full_length-gap) for i in range(4)]
   
-  # Draws walls for each side of the screen
-  wall_top = Border(gap, COLOUR, gap*i + 10, gap*i + 10, first_wall_lengths[0], full_length) # top
-  wall_bottom = Border(gap, COLOUR, gap*i + 10, HEIGHT - gap*i, first_wall_lengths[1], full_length) # bottom
-  wall_top_left = Border(gap, COLOUR, gap*i + 10, gap*i + 10, first_wall_lengths[2], full_length) # left
-  wall_top_right = Border(gap, COLOUR, WIDTH - gap*i + 10, gap*i + 10, first_wall_lengths[3], full_length) # right
+  # Create four walls for each side of the screen
+  wall_top = Border(gap, COLOUR, gap*i + 10, gap*i + 10, first_wall_lengths[0], full_length, wall_thickness) # top
+  wall_bottom = Border(gap, COLOUR, gap*i + 10, HEIGHT - gap*i, first_wall_lengths[1], full_length, wall_thickness) # bottom
+  wall_left = Border(gap, COLOUR, gap*i + 10, gap*i + 10, first_wall_lengths[2], full_length, wall_thickness) # left
+  wall_right = Border(gap, COLOUR, WIDTH - gap*i + 10, gap*i + 10, first_wall_lengths[3], full_length, wall_thickness) # right
+  
+  # Build the walls, this is what creates the Sprites!!!!
+  wall_top.build_horizontal_wall()
+  wall_bottom.build_horizontal_wall()
+  wall_left.build_vertical_wall()
+  wall_right.build_vertical_wall()
   
   # Add the walls to the walls array to display they in the game loop
-  walls_horizontal.append(wall_top)  
-  walls_horizontal.append(wall_bottom)
-  walls_vertical.append(wall_top_left)
-  walls_vertical.append(wall_top_right)
+  maze.add(wall_top.walls.sprites())
+  maze.add(wall_bottom.walls.sprites())
+  maze.add(wall_left.walls.sprites())
+  maze.add(wall_right.walls.sprites())
+
+# Add walls to the maze sprite group
+print(f"maze: {maze}")
 
 # create a coin instance
 coins = sprite.Group()
-
-# Create a group for the Wallet
-wallet = sprite.Group()
 
 # store the possible coin positions
 pos = [15, 95]
@@ -153,16 +169,15 @@ while len(pos) < 13:
   pos.append(i)
   
 # Create the wallet prop
-wallet_icon = Props(0, "wallet.png", choice(pos), choice(pos))
-# Add the wallet to the coins group to display it
-coins.add(wallet_icon)
+wallet = Props(0, "wallet.png", choice(pos), choice(pos))
 
 # Create the ghost and assign a random position
 ghost = Ghosts(2, "ghost.png", choice(pos), choice(pos))
 
 # Create the player and assign the home position
 player = Player(2, "player.png", 15, 15)
-    
+
+# Create the randomly positioned coins    
 for i in range(12):
   coin = Coin("coin.png", choice(pos), choice(pos))
   coins.add(coin)
@@ -170,6 +185,7 @@ for i in range(12):
 # Variable to start and stop the loop
 running = True
 
+# Start the game loop
 while running:
   
   # Quit game when pressing X on the window
@@ -182,18 +198,43 @@ while running:
   screen.fill(COLOUR_BK)
   
   # Build the walls
-  for wall in walls_horizontal:
-    wall.build_wall_horizontal()
-  for wall in walls_vertical:
-    wall.build_wall_vertical()
+  maze.draw(screen)
   
-  # Draw coins
+  # Draw the wallet
+  wallet.update()
+  
+  #Draw the group of coins
   coins.draw(screen)
+  
+  # Draw the ghost
   ghost.update()
-  ghost.move()
+  ghost.move() # Get the ghost moving
+  
+  # Draw the player
   player.update()
-  player.controls()
-        
+  player.controls() # control the player with the arrow keys
+  
+  # Pick up the coins
+  coin_hit_list = sprite.spritecollide(player, coins, True)
+  for coin in coin_hit_list:
+    coins_collected += 1 # Add them to the list to check for a win
+  
+  # Return the player home if it touches the walls or the ghost
+  if sprite.spritecollide(player, maze, False):
+    player.rect.x = 15
+    player.rect.y = 15
+  
+  # Check that all the coins have been collected, now the player can get the wallet
+  if coins_collected == 12:
+    win = Rect.colliderect(player.rect, wallet.rect)
+    # Game over screen if the player wins
+    if win == True:
+      game_over = score_font.render("GAME OVER", True, "orange")
+      screen.blit(game_over, (WIDTH/2 - 77, HEIGHT/2 - 10))
+      display.flip() # Update the screen
+      time.delay(5000) # Show Game over for 5 seconds
+      running = False
+  
   display.update()
   clock.tick(60)
   
