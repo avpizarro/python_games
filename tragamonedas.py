@@ -92,7 +92,7 @@ class Border():
 class Coin(sprite.Sprite):
   def __init__(self, img, x_pos, y_pos):
     sprite.Sprite.__init__(self)
-    self.original_image = transform.scale(image.load(img), (40,40)).convert_alpha()
+    self.original_image = transform.smoothscale(image.load(img), (40,40)).convert_alpha()
     self.image = self.original_image.copy()
     self.rect = self.image.get_rect()
     self.rect.x = x_pos
@@ -106,7 +106,7 @@ class Props(sprite.Sprite):
   def __init__(self, speed, img, x, y):
     sprite.Sprite.__init__(self)
     self.speed = speed
-    self.image = transform.scale(image.load(img), (40, 40))
+    self.image = transform.smoothscale(image.load(img), (40, 40))
     self.rect = self.image.get_rect()
     self.rect.x = x
     self.rect.y = y
