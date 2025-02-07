@@ -159,10 +159,12 @@ while running:
     # Add a new pipe once the pipe leaves the screen
     pipe.reset()
    
+    # Increase the score
     if bird.rect.right > pipe.top.right and not pipe.passed:
       pipe.passed = True
       score += 1
     
+    # Check for collition between the bird and the pipe
     if bird.mask.overlap(pipe.top_mask, (pipe.top.x - bird.rect.x, pipe.top.y - bird.rect.y)) or bird.mask.overlap(pipe.bottom_mask, (pipe.bottom.x - bird.rect.x, pipe.bottom.y - bird.rect.y)):
       game_over = score_font.render("GAME OVER", True, (255,255,255))
       screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))
@@ -170,9 +172,11 @@ while running:
       time.delay(5000) # Show Game over for 5 seconds
       running = False
       
+  # Display the updated score     
   score_text = score_font.render("Score: "+str(score), True, (0, 0, 0))
   screen.blit(score_text, (WIDTH - 180, 50))
   
+  # Game over if the bird hits the ground
   if bird.rect.y >= HEIGHT - bird.rect.h:
     game_over = score_font.render("GAME OVER", True, (255,255,255))
     screen.blit(game_over, (WIDTH/2 - 90, HEIGHT/2 + 40))

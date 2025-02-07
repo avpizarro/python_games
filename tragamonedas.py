@@ -33,12 +33,13 @@ WIDTH = 800
 HEIGHT = 800
 
 # Colours
-COLOUR_BK = ((238, 238, 238))
-COLOUR = ((0, 0, 0))
+# COLOUR_BK = ((238, 238, 238))
+COLOUR = ("orange")
 
 # Wall
 wall_thickness = 10
-gap = 60
+# gap = 60
+gap = 80
 num_of_walls = int(((WIDTH-gap)/(gap+10)) + 1)
 
 # Coins
@@ -47,6 +48,8 @@ coins_collected = 0
 #Set the display
 #Size
 screen = display.set_mode((WIDTH, HEIGHT))
+# Add background image
+bg = transform.scale(image.load("ai-generated-9088888_1280.jpg"), (WIDTH, HEIGHT))
 # Game name
 display.set_caption("Tragamonedas 💰")
 
@@ -184,7 +187,7 @@ class Player(Props):
 # Create the maze
 maze = sprite.Group()
 
-for i in range(1, 6):
+for i in range(1, 4):
   
   # Get the full length we have to build the walls, 
   full_length = int(WIDTH - gap*2*i) # (This is passed as a param to calculate the second side of the wall length)
@@ -221,17 +224,21 @@ while len(pos) < 13:
   pos.append(i)
   
 # Create the wallet prop
-wallet = Props(0, "wallet.png", choice(pos), choice(pos))
+# wallet = Props(0, "wallet.png", choice(pos), choice(pos))
+wallet = Props(0, "banking-4318911_640.png", choice(pos), choice(pos))
 
 # Create the ghost and assign a random position
-ghost = Ghosts(10, "ghost.png", choice(pos), choice(pos))
+# ghost = Ghosts(10, "ghost.png", choice(pos), choice(pos))
+ghost = Ghosts(10, "hacker.png", choice(pos), choice(pos))
 
 # Create the player and assign the home position
-player = Player(5, "player.png", 15, 15)
+# player = Player(5, "player.png", 15, 15)
+player = Player(5, "developer.png", 15, 15)
 
 # Create the randomly positioned coins    
 for i in range(12):
-  coin = Coin("coin.png", choice(pos), choice(pos))
+  # coin = Coin("coin.png", choice(pos), choice(pos))
+  coin = Coin("bitcoin.png", choice(pos), choice(pos))
   coins.add(coin)
 
 # Variable to start and stop the loop
@@ -247,7 +254,10 @@ while running:
       running = False
       
   # Add a colour to the display
-  screen.fill(COLOUR_BK)
+  # screen.fill(COLOUR_BK)
+  
+  # Display the background
+  screen.blit(bg, (0,0))
   
   # Build the walls
   maze.draw(screen)
@@ -256,7 +266,7 @@ while running:
   wallet.update()
   
   # Add coins collected amount
-  coins_collected_text = amount_font.render(str(coins_collected), True, "black")
+  coins_collected_text = amount_font.render(str(coins_collected), True, (255,255,255))
   screen.blit(coins_collected_text, (wallet.rect.centerx-5, wallet.rect.centery-2))
   
   #Draw the group of coins

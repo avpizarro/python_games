@@ -86,6 +86,18 @@ Game Over Sound Effect by [Ribhav Agrawal](https://pixabay.com/users/ribhavagraw
 
 Winning Sound Effect by [Universfield](https://pixabay.com/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=144751) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=144751)
 
+Background Image by [kp yamu Jayanath](https://pixabay.com/users/yamu_jay-44818947/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=9088888)
+ from [Pixabay](https://pixabay.ckcom//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=9088888")
+
+Bitcoin Image by [Nurdin Bekkeldiev](https://pixabay.com/users/odinzero-43301353/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8976961) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8976961)
+
+Card Image by [Alistair Whyte](https://pixabay.com/users/whyteali-306823/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=4318911) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=4318911)
+
+Hacker Image by [Henning](https://pixabay.com/users/hnnng-15965496/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5151533) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5151533)
+
+[Developer Image](https://www.freepik.com/premium-vector/concentrated-ethnic-female-freelancer-using-laptop_368738734.htm#fromView=user&page=1&position=0) by 
+[@anaya83](https://www.freepik.com/author/anaya83) from [Freepik](https://www.freepik.com)
+
 ## 🛠️ Features & Future Improvements
 ✅ Randomized ball movement direction in Telebolito  
 ✅ AI-controlled paddle movement  
