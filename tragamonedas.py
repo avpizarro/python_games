@@ -16,6 +16,12 @@ coin_sound = mixer.Sound("retro-coin-4-236671.mp3")
 # Load the slide sound
 slide_sound = mixer.Sound("089048_woosh-slide-in-88642.mp3")
 
+# Load the winning sound
+win_sound = mixer.Sound("game-bonus-144751.mp3")
+
+# Load the loosing sound -- Add a timer to create a loosing situation
+lose_sound = mixer.Sound("sweet-game-over-sound-effect-230470.mp3")
+
 # Initialise the font
 font.init()
 game_over_font = font.Font(None,45)
@@ -218,10 +224,10 @@ while len(pos) < 13:
 wallet = Props(0, "wallet.png", choice(pos), choice(pos))
 
 # Create the ghost and assign a random position
-ghost = Ghosts(5, "ghost.png", choice(pos), choice(pos))
+ghost = Ghosts(10, "ghost.png", choice(pos), choice(pos))
 
 # Create the player and assign the home position
-player = Player(2, "player.png", 15, 15)
+player = Player(5, "player.png", 15, 15)
 
 # Create the randomly positioned coins    
 for i in range(12):
@@ -285,6 +291,7 @@ while running:
     if win == True:
       game_over = game_over_font.render("GAME OVER", True, "orange")
       screen.blit(game_over, (WIDTH/2 - 77, HEIGHT/2 - 10))
+      win_sound.play()
       display.flip() # Update the screen
       time.delay(5000) # Show Game over for 5 seconds
       running = False
