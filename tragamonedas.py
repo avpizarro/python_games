@@ -2,9 +2,24 @@ from pygame import *
 from random import randint, choice
 # import numpy as np # Imported numpy to manage image pixels and change colour - TBC
 
+# Initialise the music
+mixer.init()
+
+# Load and play background music
+mixer.music.load("game-music-150676.mp3")
+mixer.music.play(-1) # -1 causes the music to loop indefinitely
+mixer.music.set_volume(0.2) # Set the volume to 20%
+
+# Load the coin sound
+coin_sound = mixer.Sound("retro-coin-4-236671.mp3")
+
+# Load the slide sound
+slide_sound = mixer.Sound("089048_woosh-slide-in-88642.mp3")
+
 # Initialise the font
 font.init()
-score_font = font.Font(None,45)
+game_over_font = font.Font(None,45)
+amount_font = font.Font(None,25)
 
 # Set the variables
 # Screen
@@ -234,6 +249,10 @@ while running:
   # Draw the wallet
   wallet.update()
   
+  # Add coins collected amount
+  coins_collected_text = amount_font.render(str(coins_collected), True, "black")
+  screen.blit(coins_collected_text, (wallet.rect.centerx-5, wallet.rect.centery-2))
+  
   #Draw the group of coins
   coins.draw(screen)
   
@@ -247,11 +266,15 @@ while running:
   
   # Pick up the coins
   coin_hit_list = sprite.spritecollide(player, coins, True)
+  if coin_hit_list:
+    coin_sound.play()
+      
   for coin in coin_hit_list:
     coins_collected += 1 # Add them to the list to check for a win
   
   # Return the player home if it touches the walls or the ghost
   if sprite.spritecollide(player, maze, False) or sprite.collide_mask(player, ghost):
+    slide_sound.play()
     player.rect.x = 15
     player.rect.y = 15
   
@@ -260,7 +283,7 @@ while running:
     win = Rect.colliderect(player.rect, wallet.rect)
     # Game over screen if the player wins
     if win == True:
-      game_over = score_font.render("GAME OVER", True, "orange")
+      game_over = game_over_font.render("GAME OVER", True, "orange")
       screen.blit(game_over, (WIDTH/2 - 77, HEIGHT/2 - 10))
       display.flip() # Update the screen
       time.delay(5000) # Show Game over for 5 seconds

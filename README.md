@@ -75,6 +75,12 @@ The following images are used in the game:
 
 - **Colibrí** (`colibri_pixelate.png`): Pixel art based on the **Colombia Emplumada II** book cover photo by Juan Diego Castillo Ramírez - [Get the book](https://www.librerialerner.com.co/colombia-emplumada-ii-9789584874597-4090/p?srsltid=AfmBOorkkfUfNjfyKWA7GM6L7ai1O3FhO8YZ61lfYC5xIJBB5uDNkiI_)
 
+## 🎶 Music + Sounds Attributions
+Music by [Gaston A-P](https://pixabay.com/users/xtremefreddy-32332307/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=150676)from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=150676)
+
+Coin Sound Effect by [Driken Stan](https://pixabay.com/users/driken5482-45721595/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=236671) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=236671)
+
+089048_Woosh slide-in Sound Effect by [freesound_community](https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=88642) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=88642)
 ## 🛠️ Features & Future Improvements
 ✅ Randomized ball movement direction in Telebolito  
 ✅ AI-controlled paddle movement  
