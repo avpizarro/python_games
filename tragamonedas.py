@@ -6,21 +6,21 @@ from random import randint, choice
 mixer.init()
 
 # Load and play background music
-mixer.music.load("game-music-150676.mp3")
+mixer.music.load("./sounds/game-music-150676.mp3")
 mixer.music.play(-1) # -1 causes the music to loop indefinitely
 mixer.music.set_volume(0.2) # Set the volume to 20%
 
 # Load the coin sound
-coin_sound = mixer.Sound("retro-coin-4-236671.mp3")
+coin_sound = mixer.Sound("./sounds/retro-coin-4-236671.mp3")
 
 # Load the slide sound
-slide_sound = mixer.Sound("089048_woosh-slide-in-88642.mp3")
+slide_sound = mixer.Sound("./sounds/089048_woosh-slide-in-88642.mp3")
 
 # Load the winning sound
-win_sound = mixer.Sound("game-bonus-144751.mp3")
+win_sound = mixer.Sound("./sounds/game-bonus-144751.mp3")
 
 # Load the loosing sound -- Add a timer to create a loosing situation
-lose_sound = mixer.Sound("sweet-game-over-sound-effect-230470.mp3")
+lose_sound = mixer.Sound("./sounds/sweet-game-over-sound-effect-230470.mp3")
 
 # Initialise the font
 font.init()
@@ -50,7 +50,7 @@ coins_collected = 0
 #Size
 screen = display.set_mode((WIDTH, HEIGHT))
 # Add background image
-bg = transform.scale(image.load("ai-generated-9088888_1280.jpg"), (WIDTH, HEIGHT))
+bg = transform.scale(image.load("./images/ai-generated-9088888_1280.jpg"), (WIDTH, HEIGHT))
 # Game name
 display.set_caption("Tragamonedas 💰")
 
@@ -93,7 +93,7 @@ class Border():
 class Coin(sprite.Sprite):
   def __init__(self, img, x_pos, y_pos):
     sprite.Sprite.__init__(self)
-    self.original_image = transform.smoothscale(image.load(img), (40,40)).convert_alpha()
+    self.original_image = transform.smoothscale(image.load(img), (30,30)).convert_alpha()
     self.image = self.original_image.copy()
     self.rect = self.image.get_rect()
     self.rect.x = x_pos
@@ -174,53 +174,7 @@ class Ghosts(Props):
       self.vertical_direction = "up"
     if self.rect.y  <= 5:
       self.vertical_direction = "down"
-      
-    
-    # # Store old position in case we need to revert
-    # old_x, old_y = self.rect.x, self.rect.y
-    
-    # direction = choice(["left", "right", "up", "down"])
-    
-    # # Move in the current direction
-    # if direction == "right":
-    #   self.rect.move_ip(self.speed, 0)
-    # # Move left
-    # elif direction == "left":
-    #   self.rect.move_ip(-self.speed, 0)
-    # # Move up
-    # elif direction == "up":
-    #  self.rect.move_ip(0, -self.speed)
-    # # Move down
-    # elif direction ==  "bottom":
-    #   self.rect.move_ip(0, self.speed)
-      
-    # # Check for collisions with walls
-    # if sprite.spritecollide(self, walls, False, sprite.collide_rect_ratio(0.8)) or not (0 <= self.rect.x <= WIDTH - self.rect.w and 0 <= self.rect.y <= HEIGHT - self.rect.h):
-    #   # Revert movement if collision is detected
-    #   self.rect.x, self.rect.y = old_x, old_y
-      
-    #   # Get a list of valid movement directions
-    #   valid_directions = []
-    #   test_moves = {
-    #     "left": (self.rect.x - self.speed, self.rect.y),
-    #     "right": (self.rect.x + self.speed, self.rect.y),
-    #     "up": (self.rect.x, self.rect.y - self.speed),
-    #     "down": (self.rect.x, self.rect.y + self.speed),
-    #   }
-      
-    #   for direction, (new_x, new_y) in test_moves.items():
-    #     self.rect.topleft = (new_x, new_y) # Temporarily move
-    #     if not sprite.spritecollide(self, walls, False) and (0 <= new_x <= WIDTH - self.rect.w and 0 <= new_y <= HEIGHT):
-    #       valid_directions.append(direction)
-      
-    #   self.rect.x, self.rect.y = old_x, old_y # Restore original position
-      
-    #   # If valid direction exist, choose a new one
-    #   if valid_directions:
-    #     direction = choice(valid_directions)
-    #   else:
-    #     direction = choice([["left", "right", "up", "down"]])
-    
+          
 # Define the Player class with the method to control the movement
 class Player(Props):
   def controls(self):
@@ -266,37 +220,40 @@ for i in range(1, 4):
 # create a coin instance
 coins = sprite.Group()
 
-# store the possible coin positions
+# Create and store the possible coins, wallet and ghosts positions
 pos = [25, 110]
 i = 110
 while len(pos) < 10:
   i += 80
   pos.append(i)
-  
-print(pos)
+
 # Create the wallet prop
-# wallet = Props(0, "wallet.png", choice(pos), choice(pos))
-wallet = Props(0, "banking-4318911_640.png", choice(pos), choice(pos))
+wallet = Props(0, "./images/banking-4318911_640.png", choice(pos), choice(pos))
 
 # Create a group of ghosts
 ghosts = sprite.Group()
 ghosts_vertical = sprite.Group()
+
 # Create the ghost and assign a random position
-# 
-# ghost = Ghosts(10, "ghost.png", choice(pos), choice(pos))
 for i in range(ghost_number):
   ghost_coordinate = choice(pos)
-  ghost = Ghosts(5, "hacker.png", ghost_coordinate, ghost_coordinate)
+  ghost = Ghosts(5, "./images/hacker.png", ghost_coordinate, ghost_coordinate)
   ghosts.add(ghost)
+  
+# Add ghosts to the group that will move vertically
+for i in range(ghost_number):
+  ghost_coordinate = choice(pos)
+  ghost = Ghosts(5, "./images/hacker.png", ghost_coordinate, ghost_coordinate)
+  ghosts_vertical.add(ghost)
 
 # Create the player and assign the home position
 # player = Player(5, "player.png", 15, 15)
-player = Player(5, "developer.png", 25, 25)
+player = Player(5, "./images/developer.png", 25, 25)
 
 # Create the randomly positioned coins    
 for i in range(12):
   # coin = Coin("coin.png", choice(pos), choice(pos))
-  coin = Coin("bitcoin.png", choice(pos), choice(pos))
+  coin = Coin("./images/bitcoin.png", choice(pos), choice(pos))
   coins.add(coin)
 
 # Variable to start and stop the loop
@@ -331,13 +288,13 @@ while running:
   coins.draw(screen)
   
   # Draw the ghost
-  i = 0
   for ghost in ghosts:
-    for i in range(4):
-      ghost.move(maze) # Get the ghost moving
-    for i in range(4, 8):
+      ghost.move(maze) # Get the ghosts moving
+  for ghost in ghosts_vertical:
       ghost.move_vertical(maze) # Get 4 ghosts moving vertical
+      
   ghosts.draw(screen)
+  ghosts_vertical.draw(screen)
   
   # Draw the player
   player.update()
@@ -352,7 +309,7 @@ while running:
     coins_collected += 1 # Add them to the list to check for a win
   
   # Return the player home if it touches the walls or the ghost
-  if sprite.spritecollide(player, maze, False) or sprite.collide_mask(player, ghost):
+  if sprite.spritecollide(player, maze, False) or sprite.spritecollide(player, ghosts, False) or sprite.spritecollide(player, ghosts_vertical, False):
     slide_sound.play()
     player.rect.x = 15
     player.rect.y = 15
@@ -362,12 +319,13 @@ while running:
     win = Rect.colliderect(player.rect, wallet.rect)
     # Game over screen if the player wins
     if win == True:
-      game_over = game_over_font.render("GAME OVER", True, "orange")
-      screen.blit(game_over, (WIDTH/2 - 77, HEIGHT/2 - 10))
+      game_over = game_over_font.render("WINNER 🎉", True, "orange")
+      screen.blit(game_over, (WIDTH/2 - 70, HEIGHT/2 - 10))
       win_sound.play()
       display.flip() # Update the screen
       time.delay(5000) # Show Game over for 5 seconds
       running = False
+
   
   display.update()
   clock.tick(60)
