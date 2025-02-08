@@ -123,6 +123,7 @@ class Ghosts(Props):
     super().__init__(speed, img, x, y)
     self.collide_rect = self.rect.inflate(-15,-15) # Smaller collision area
     self.direction = "left"
+    self.vertical_direction = "up"
     
   def move(self, walls):
     """Moves the ghost and changes direction upon collision."""
@@ -148,6 +149,31 @@ class Ghosts(Props):
       self.direction = "left"
     if self.rect.x  <= 5:
       self.direction = "right"
+      
+  def move_vertical(self, walls):
+    """Moves the ghost and changes direction upon collision."""
+    
+    # Get the ghost moving
+    if self.vertical_direction == "up":
+      self.rect.y -= self.speed
+    else:
+      self.rect.y += self.speed
+    
+    # Check for collitions with walls
+    if sprite.spritecollide(self, walls, False):
+      # Undo movement
+      if self.vertical_direction == "up":
+        self.rect.y += self.speed # Move back
+        self.vertical_direction = "down" # Change direction
+      else:
+        self.rect.y -= self.speed # Move back
+        self.vertical_direction = "up" # Change direction
+          
+    # Handle screen bounderies separately:  
+    if self.rect.y >= HEIGHT - self.rect.h:
+      self.vertical_direction = "up"
+    if self.rect.y  <= 5:
+      self.vertical_direction = "down"
       
     
     # # Store old position in case we need to revert
@@ -254,7 +280,9 @@ wallet = Props(0, "banking-4318911_640.png", choice(pos), choice(pos))
 
 # Create a group of ghosts
 ghosts = sprite.Group()
+ghosts_vertical = sprite.Group()
 # Create the ghost and assign a random position
+# 
 # ghost = Ghosts(10, "ghost.png", choice(pos), choice(pos))
 for i in range(ghost_number):
   ghost_coordinate = choice(pos)
@@ -303,8 +331,12 @@ while running:
   coins.draw(screen)
   
   # Draw the ghost
+  i = 0
   for ghost in ghosts:
-   ghost.move(maze) # Get the ghost moving
+    for i in range(4):
+      ghost.move(maze) # Get the ghost moving
+    for i in range(4, 8):
+      ghost.move_vertical(maze) # Get 4 ghosts moving vertical
   ghosts.draw(screen)
   
   # Draw the player
