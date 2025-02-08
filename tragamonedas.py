@@ -33,14 +33,15 @@ WIDTH = 800
 HEIGHT = 800
 
 # Colours
-# COLOUR_BK = ((238, 238, 238))
 COLOUR = ("orange")
 
 # Wall
 wall_thickness = 10
-# gap = 60
 gap = 80
 num_of_walls = int(((WIDTH-gap)/(gap+10)) + 1)
+
+# Ghost
+ghost_number = 4
 
 # Coins
 coins_collected = 0
@@ -118,58 +119,81 @@ class Props(sprite.Sprite):
     screen.blit(self.image, 15, 15)
     
 class Ghosts(Props):
-  def __init__(self, speed, img, x, y ):
+  def __init__(self, speed, img, x, y):
     super().__init__(speed, img, x, y)
     self.collide_rect = self.rect.inflate(-15,-15) # Smaller collision area
-
-  
+    self.direction = "left"
+    
   def move(self, walls):
     """Moves the ghost and changes direction upon collision."""
     
-    # Store old position in case we need to revert
-    old_x, old_y = self.rect.x, self.rect.y
+    # Get the ghost moving
+    if self.direction == "left":
+      self.rect.x -= self.speed
+    else:
+      self.rect.x += self.speed
     
-    direction = choice(["left", "right", "up", "down"])
-    
-    # Move in the current direction
-    if direction == "right":
-      self.rect.move_ip(self.speed, 0)
-    # Move left
-    elif direction == "left":
-      self.rect.move_ip(-self.speed, 0)
-    # Move up
-    elif direction == "up":
-     self.rect.move_ip(0, -self.speed)
-    # Move down
-    elif direction ==  "bottom":
-      self.rect.move_ip(0, self.speed)
-      
-    # Check for collisions with walls
-    if sprite.spritecollide(self, walls, False, sprite.collide_rect_ratio(0.8)) or not (0 <= self.rect.x <= WIDTH - self.rect.w and 0 <= self.rect.y <= HEIGHT - self.rect.h):
-      # Revert movement if collision is detected
-      self.rect.x, self.rect.y = old_x, old_y
-      
-      # Get a list of valid movement directions
-      valid_directions = []
-      test_moves = {
-        "left": (self.rect.x - self.speed, self.rect.y),
-        "right": (self.rect.x + self.speed, self.rect.y),
-        "up": (self.rect.x, self.rect.y - self.speed),
-        "down": (self.rect.x, self.rect.y + self.speed),
-      }
-      
-      for direction, (new_x, new_y) in test_moves.items():
-        self.rect.topleft = (new_x, new_y) # Temporarily move
-        if not sprite.spritecollide(self, walls, False) and (0 <= new_x <= WIDTH - self.rect.w and 0 <= new_y <= HEIGHT):
-          valid_directions.append(direction)
-      
-      self.rect.x, self.rect.y = old_x, old_y # Restore original position
-      
-      # If valid direction exist, choose a new one
-      if valid_directions:
-        direction = choice(valid_directions)
+    # Check for collitions with walls
+    if sprite.spritecollide(self, walls, False):
+      # Undo movement
+      if self.direction == "left":
+        self.rect.x += self.speed # Move back
+        self.direction = "right" # Change direction
       else:
-        direction = choice([["left", "right", "up", "down"]])
+        self.rect.x -= self.speed # Move back
+        self.direction = "left" # Change direction
+          
+    # Handle screen bounderies separately:  
+    if self.rect.x >= WIDTH - self.rect.w:
+      self.direction = "left"
+    if self.rect.x  <= 5:
+      self.direction = "right"
+      
+    
+    # # Store old position in case we need to revert
+    # old_x, old_y = self.rect.x, self.rect.y
+    
+    # direction = choice(["left", "right", "up", "down"])
+    
+    # # Move in the current direction
+    # if direction == "right":
+    #   self.rect.move_ip(self.speed, 0)
+    # # Move left
+    # elif direction == "left":
+    #   self.rect.move_ip(-self.speed, 0)
+    # # Move up
+    # elif direction == "up":
+    #  self.rect.move_ip(0, -self.speed)
+    # # Move down
+    # elif direction ==  "bottom":
+    #   self.rect.move_ip(0, self.speed)
+      
+    # # Check for collisions with walls
+    # if sprite.spritecollide(self, walls, False, sprite.collide_rect_ratio(0.8)) or not (0 <= self.rect.x <= WIDTH - self.rect.w and 0 <= self.rect.y <= HEIGHT - self.rect.h):
+    #   # Revert movement if collision is detected
+    #   self.rect.x, self.rect.y = old_x, old_y
+      
+    #   # Get a list of valid movement directions
+    #   valid_directions = []
+    #   test_moves = {
+    #     "left": (self.rect.x - self.speed, self.rect.y),
+    #     "right": (self.rect.x + self.speed, self.rect.y),
+    #     "up": (self.rect.x, self.rect.y - self.speed),
+    #     "down": (self.rect.x, self.rect.y + self.speed),
+    #   }
+      
+    #   for direction, (new_x, new_y) in test_moves.items():
+    #     self.rect.topleft = (new_x, new_y) # Temporarily move
+    #     if not sprite.spritecollide(self, walls, False) and (0 <= new_x <= WIDTH - self.rect.w and 0 <= new_y <= HEIGHT):
+    #       valid_directions.append(direction)
+      
+    #   self.rect.x, self.rect.y = old_x, old_y # Restore original position
+      
+    #   # If valid direction exist, choose a new one
+    #   if valid_directions:
+    #     direction = choice(valid_directions)
+    #   else:
+    #     direction = choice([["left", "right", "up", "down"]])
     
 # Define the Player class with the method to control the movement
 class Player(Props):
@@ -217,23 +241,29 @@ for i in range(1, 4):
 coins = sprite.Group()
 
 # store the possible coin positions
-pos = [15, 95]
-i = 95
-while len(pos) < 13:
-  i += 60
+pos = [25, 110]
+i = 110
+while len(pos) < 10:
+  i += 80
   pos.append(i)
   
+print(pos)
 # Create the wallet prop
 # wallet = Props(0, "wallet.png", choice(pos), choice(pos))
 wallet = Props(0, "banking-4318911_640.png", choice(pos), choice(pos))
 
+# Create a group of ghosts
+ghosts = sprite.Group()
 # Create the ghost and assign a random position
 # ghost = Ghosts(10, "ghost.png", choice(pos), choice(pos))
-ghost = Ghosts(10, "hacker.png", choice(pos), choice(pos))
+for i in range(ghost_number):
+  ghost_coordinate = choice(pos)
+  ghost = Ghosts(5, "hacker.png", ghost_coordinate, ghost_coordinate)
+  ghosts.add(ghost)
 
 # Create the player and assign the home position
 # player = Player(5, "player.png", 15, 15)
-player = Player(5, "developer.png", 15, 15)
+player = Player(5, "developer.png", 25, 25)
 
 # Create the randomly positioned coins    
 for i in range(12):
@@ -273,8 +303,9 @@ while running:
   coins.draw(screen)
   
   # Draw the ghost
-  ghost.move(maze) # Get the ghost moving
-  ghost.update()
+  for ghost in ghosts:
+   ghost.move(maze) # Get the ghost moving
+  ghosts.draw(screen)
   
   # Draw the player
   player.update()
