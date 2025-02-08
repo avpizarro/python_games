@@ -333,21 +333,30 @@ while running:
     # Check that all the coins have been collected, now the player can get the wallet
     if coins_collected == 12 and Rect.colliderect(player.rect, wallet.rect):
       end = True
+      win = True
       screen.blit(winning_text, (WIDTH/2 - 70, HEIGHT/2 - 10))
       win_sound.play()
       player.rect.x = 25
       player.rect.y = 25
       time.delay(5000)
-      running = False
     
     if lives == 0:
       end = True
+      win = False
       screen.blit(game_over, (WIDTH/2 - 77, HEIGHT/2 - 10))
       lose_sound.play()
   
   else:
     end = False
     lives = 3
+    if win == True:
+      coins_collected = 0
+      for c in coins:
+        c.kill()
+      # Create the randomly positioned coins    
+      for i in range(12):
+        coin = Coin("./images/bitcoin.png", choice(pos), choice(pos))
+        coins.add(coin)
     time.delay(3000)
   
   display.update()
