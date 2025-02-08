@@ -11,8 +11,8 @@ speed = 20
 screen = display.set_mode((WIDTH, HEIGHT))
 display.set_caption("Flight 714")
 clock = time.Clock()
-background = transform.scale(image.load("desert.jpg"),(600,600))
-plane = transform.scale(image.load("airplane.png"), (80,80))
+background = transform.smoothscale(image.load("./images/desert.jpg"),(600,600))
+plane = transform.smoothscale(image.load("./images/airplane.png"), (80,80))
 dt = 0
 
 run = True

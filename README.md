@@ -7,19 +7,19 @@ This repository contains exercises and small games created using **Pygame** as p
 
 ### **1️⃣ Telebolito** 
 A classic **Pong-style** game where you control a paddle, and the computer controls the other. The goal is to bounce the ball and score points against the AI opponent.
-![telebolito](./telebolito.png)
+![telebolito](./images/telebolito.png)
 
 ### **2️⃣ Flight 714**
 A simple game where you control an airplane, moving it around the screen while keeping it within boundaries.
-![flight 714](./flight714.png)
+![flight 714](./images/flight714.png)
 
 ### **3️⃣ Colibrí**
 A Flappy-Bird game where you keep the bird in the air with the space bar. Try not to hit the pipes and enjoy the Colombian mountains lanscape 😊
-![colibri](./colibri_landscape.png)
+![colibri](./images/colibri_landscape.png)
 
 ### **4️⃣ Tragamonedas 💰**
 A Pac-Man bird game, collect all the coins and the wallet once it is full to join the cryto-queens ₿.
-![tragamonedas](./tragamonedas.png)
+![tragamonedas](./images/tragamonedas.png)
 
 ## 📌 Installation
 Make sure you have **Python 3.x** installed. Then, follow these steps:
@@ -48,7 +48,7 @@ python3 telebolito.py
 ```
 #### **Run Flight 714**
 ```bash
-python3 game.py
+python3 flight714.py
 ```
 #### **Run Colibrí**
 ```bash

@@ -27,8 +27,10 @@ direction_y = 1
 
 step = 15
 speed = 5
-speed_increment = 0
-score_tracker = 5
+speed_increment = 0.5
+time_interval = 3000
+last_speed_increase = time.get_ticks()
+
 
 # Variables to store the points
 player = 0
@@ -122,7 +124,8 @@ while running:
       quit()
       running = False
 
-  screen.fill(COLOUR_BK)
+  screen.fill(COLOUR_BK) 
+  current_time = time.get_ticks() # Get the current time
   
   
   # Draw middle line
@@ -153,10 +156,10 @@ while running:
   if keys[K_DOWN] and paddle_y < HEIGHT-65:
     paddle_y += step
   
-  if (player == computer and player > score_tracker and computer > score_tracker):
-    speed_increment += 0.001
-    speed += speed_increment
-    score_tracker += 5
+  # Check if the players scores are tied after 3s to increase the speed
+  if current_time - last_speed_increase >= time_interval and player == computer:
+    speed += speed_increment # Increase speed
+    last_speed_increase = current_time # Reset timer
 
   display.flip()
   

@@ -1,12 +1,11 @@
 from pygame import *
 from random import randint, choice
-# import numpy as np # Imported numpy to manage image pixels and change colour - TBC
 
 # Initialise the music
 mixer.init()
 
 # Load and play background music
-mixer.music.load("./sounds/game-music-150676.mp3")
+mixer.music.load("./sounds/game-music.mp3")
 mixer.music.play(-1) # -1 causes the music to loop indefinitely
 mixer.music.set_volume(0.2) # Set the volume to 20%
 
@@ -332,13 +331,13 @@ while running:
     
     # Check that all the coins have been collected, now the player can get the wallet
     if coins_collected == 12 and Rect.colliderect(player.rect, wallet.rect):
-      end = True
-      win = True
       screen.blit(winning_text, (WIDTH/2 - 70, HEIGHT/2 - 10))
       win_sound.play()
+      display.flip()
+      end = True
+      win = True
       player.rect.x = 25
       player.rect.y = 25
-      time.delay(5000)
     
     if lives == 0:
       end = True

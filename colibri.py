@@ -32,7 +32,7 @@ screen = display.set_mode((WIDTH, HEIGHT))
 # Game name
 display.set_caption("Colibrí")
 # Add a background image
-background = transform.scale(image.load("mountains.jpg"), (WIDTH,HEIGHT))
+background = transform.smoothscale(image.load("./images/mountains.jpg"), (WIDTH,HEIGHT))
 
 clock = time.Clock()
 running = True
@@ -42,7 +42,7 @@ running = True
 class Props():
   def __init__(self, speed, img, x, y):
     self.speed = speed
-    self.original_img = transform.scale(image.load(img), (bird_width, bird_height))
+    self.original_img = transform.smoothscale(image.load(img), (bird_width, bird_height))
     self.img = self.original_img
     self.rect = self.img.get_rect()
     self.rect.center= x, y
@@ -123,7 +123,7 @@ class Pipe():
       self.passed = False
    
 # Load the bird image;
-bird = Bird(speed, "colibri_pixelate.png", bird_x, bird_y)
+bird = Bird(speed, "./images/colibri_pixelate.png", bird_x, bird_y)
 
 # Create the pipes
 pipes = [Pipe(2, pipe_width, gap, pipe_x+(pipe_width*2)*i) for i in range(4)]
