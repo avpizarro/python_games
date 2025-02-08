@@ -24,8 +24,10 @@ lose_sound = mixer.Sound("./sounds/sweet-game-over-sound-effect-230470.mp3")
 
 # Initialise the font
 font.init()
-game_over_font = font.Font(None,45)
+status_font = font.Font(None,45)
 amount_font = font.Font(None,25)
+winning_text = status_font.render("WINNER 🎉", True, "orange")
+game_over = status_font.render("GAME OVER", True, "orange")
 
 # Set the variables
 # Screen
@@ -45,6 +47,9 @@ ghost_number = 4
 
 # Coins
 coins_collected = 0
+
+# Player
+lives = 3
 
 #Set the display
 #Size
@@ -116,7 +121,8 @@ class Props(sprite.Sprite):
     screen.blit(self.image, (self.rect.x, self.rect.y))
   
   def reset(self):
-    screen.blit(self.image, 15, 15)
+    self.rect.x = 25
+    self.rect.y = 25
     
 class Ghosts(Props):
   def __init__(self, speed, img, x, y):
@@ -234,15 +240,19 @@ wallet = Props(0, "./images/banking-4318911_640.png", choice(pos), choice(pos))
 ghosts = sprite.Group()
 ghosts_vertical = sprite.Group()
 
+# Change to avoid the ghost hitting the player at home
+ghost_pos = pos.copy()
+ghost_pos.remove(25)
+print(ghost_pos)
 # Create the ghost and assign a random position
 for i in range(ghost_number):
-  ghost_coordinate = choice(pos)
+  ghost_coordinate = choice(ghost_pos)
   ghost = Ghosts(5, "./images/hacker.png", ghost_coordinate, ghost_coordinate)
   ghosts.add(ghost)
   
 # Add ghosts to the group that will move vertically
 for i in range(ghost_number):
-  ghost_coordinate = choice(pos)
+  ghost_coordinate = choice(ghost_pos)
   ghost = Ghosts(5, "./images/hacker.png", ghost_coordinate, ghost_coordinate)
   ghosts_vertical.add(ghost)
 
@@ -258,6 +268,7 @@ for i in range(12):
 
 # Variable to start and stop the loop
 running = True
+end = False
 
 # Start the game loop
 while running:
@@ -267,65 +278,77 @@ while running:
     if e.type == QUIT:
       quit()
       running = False
-      
-  # Add a colour to the display
-  # screen.fill(COLOUR_BK)
   
-  # Display the background
-  screen.blit(bg, (0,0))
-  
-  # Build the walls
-  maze.draw(screen)
-  
-  # Draw the wallet
-  wallet.update()
-  
-  # Add coins collected amount
-  coins_collected_text = amount_font.render(str(coins_collected), True, (255,255,255))
-  screen.blit(coins_collected_text, (wallet.rect.centerx-5, wallet.rect.centery-2))
-  
-  #Draw the group of coins
-  coins.draw(screen)
-  
-  # Draw the ghost
-  for ghost in ghosts:
-      ghost.move(maze) # Get the ghosts moving
-  for ghost in ghosts_vertical:
-      ghost.move_vertical(maze) # Get 4 ghosts moving vertical
-      
-  ghosts.draw(screen)
-  ghosts_vertical.draw(screen)
-  
-  # Draw the player
-  player.update()
-  player.controls() # control the player with the arrow keys
-  
-  # Pick up the coins
-  coin_hit_list = sprite.spritecollide(player, coins, True)
-  if coin_hit_list:
-    coin_sound.play()
-      
-  for coin in coin_hit_list:
-    coins_collected += 1 # Add them to the list to check for a win
-  
-  # Return the player home if it touches the walls or the ghost
-  if sprite.spritecollide(player, maze, False) or sprite.spritecollide(player, ghosts, False) or sprite.spritecollide(player, ghosts_vertical, False):
-    slide_sound.play()
-    player.rect.x = 15
-    player.rect.y = 15
-  
-  # Check that all the coins have been collected, now the player can get the wallet
-  if coins_collected == 12:
-    win = Rect.colliderect(player.rect, wallet.rect)
-    # Game over screen if the player wins
-    if win == True:
-      game_over = game_over_font.render("WINNER 🎉", True, "orange")
-      screen.blit(game_over, (WIDTH/2 - 70, HEIGHT/2 - 10))
+  if end != True:   
+    # Add a colour to the display
+    # screen.fill(COLOUR_BK)
+    
+    # Display the background
+    screen.blit(bg, (0,0))
+    
+    # Build the walls
+    maze.draw(screen)
+    
+    # Draw the wallet
+    wallet.update()
+    
+    # Add coins collected amount
+    coins_collected_text = amount_font.render(str(coins_collected), True, (255,255,255))
+    screen.blit(coins_collected_text, (wallet.rect.centerx-5, wallet.rect.centery-2))
+    
+    #Draw the group of coins
+    coins.draw(screen)
+    
+    # Add number of lives to screen
+    lives_text = status_font.render(str(lives), True, (255,255,255))
+    screen.blit(lives_text, (WIDTH - 50, 25))
+    # Draw the ghost
+    for ghost in ghosts:
+        ghost.move(maze) # Get the ghosts moving
+    for ghost in ghosts_vertical:
+        ghost.move_vertical(maze) # Get 4 ghosts moving vertical
+        
+    ghosts.draw(screen)
+    ghosts_vertical.draw(screen)
+    
+    # Draw the player
+    player.update()
+    player.controls() # control the player with the arrow keys
+    
+    # Pick up the coins
+    coin_hit_list = sprite.spritecollide(player, coins, True)
+    if coin_hit_list:
+      coin_sound.play()
+        
+    for coin in coin_hit_list:
+      coins_collected += 1 # Add them to the list to check for a win
+    
+    # Return the player home if it touches the walls or the ghost
+    if sprite.spritecollide(player, maze, False) or sprite.spritecollide(player, ghosts, False) or sprite.spritecollide(player, ghosts_vertical, False):
+      slide_sound.play()
+      lives -= 1
+      player.rect.x = 25
+      player.rect.y = 25
+    
+    # Check that all the coins have been collected, now the player can get the wallet
+    if coins_collected == 12 and Rect.colliderect(player.rect, wallet.rect):
+      end = True
+      screen.blit(winning_text, (WIDTH/2 - 70, HEIGHT/2 - 10))
       win_sound.play()
-      display.flip() # Update the screen
-      time.delay(5000) # Show Game over for 5 seconds
+      player.rect.x = 25
+      player.rect.y = 25
+      time.delay(5000)
       running = False
-
+    
+    if lives == 0:
+      end = True
+      screen.blit(game_over, (WIDTH/2 - 77, HEIGHT/2 - 10))
+      lose_sound.play()
+  
+  else:
+    end = False
+    lives = 3
+    time.delay(3000)
   
   display.update()
   clock.tick(60)
